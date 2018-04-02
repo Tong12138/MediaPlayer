@@ -8,6 +8,23 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <TextBlock Margin="35" Name="ChooseText"  Text="Please choose a file(.mp3 or .mp4)"  VerticalAlignment="Top"></TextBlock>
+                <Button   Name="ChooseButton" Width="40" Height="30" Click="Button_Click" >...</Button>
+                <TextBlock Margin="35" Grid.Row="1" Name="filename" ></TextBlock>
+            </StackPanel>
+            
+            <MediaElement Name="mediaplayer" AreTransportControlsEnabled="True" AutoPlay="True" Grid.Row="2"></MediaElement>
 
+        </Grid>
+      
+        
     </Grid>
 </Page>
