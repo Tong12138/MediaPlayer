@@ -15,12 +15,19 @@
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <StackPanel Grid.Row="1" Orientation="Vertical">
+            <StackPanel  Orientation="Horizontal">
                 <TextBlock Margin="35" Name="ChooseText"  Text="Please choose a file(.mp3 or .mp4)"  VerticalAlignment="Top"></TextBlock>
                 <Button   Name="ChooseButton" Width="40" Height="30" Click="Button_Click" >...</Button>
                 <TextBlock Margin="35" Grid.Row="1" Name="filename" ></TextBlock>
             </StackPanel>
-            
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Height="30" Margin="35,-20" PlaceholderText="please input website" Name="textbox"></TextBox>
+                    <Button Name="OnButton" Height="30"  HorizontalAlignment="Left" Click="OnButton_Click">OnlineMusic</Button>
+                    <Button Name="DowmButton" Margin="30,0,0,0"  Height="30" Click="DowmButton_Click" > DownloadMusic</Button>
+                </StackPanel>
+               
+            </StackPanel>
             <MediaElement Name="mediaplayer" AreTransportControlsEnabled="True" AutoPlay="True" Grid.Row="2"></MediaElement>
 
         </Grid>

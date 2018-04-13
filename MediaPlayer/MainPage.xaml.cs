@@ -16,6 +16,10 @@ using Windows.UI.Xaml.Navigation;
 using Windows.Storage.Pickers;
 using System.Threading.Tasks;
 using Windows.Media;
+using Windows.Storage;
+using Windows.Web.Http;
+using Windows.Storage.Streams;
+using Windows.Media.Core;
 
 
 
@@ -33,10 +37,10 @@ namespace MediaPlayer
             this.InitializeComponent();
         }
 
-        private async void  Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             FileOpenPicker filepicker = new FileOpenPicker();
-            filepicker.ViewMode= Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+            filepicker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
             filepicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
             filepicker.FileTypeFilter.Add(".mp3");
             filepicker.FileTypeFilter.Add(".mp4");
@@ -56,5 +60,66 @@ namespace MediaPlayer
             }
 
         }
+
+        private void OnButton_Click(object sender, RoutedEventArgs e)
+        {
+            Uri uri;
+            if (textbox.Text=="")
+            {
+                 uri= new Uri("http://www.neu.edu.cn/indexsource/neusong.mp3");
+            }
+              else
+                 uri = new Uri(textbox.Text);
+
+            filename.Text = System.IO.Path.GetFileName(uri.LocalPath);
+            mediaplayer.Source = uri;
+        }
+
+        private async void DowmButton_Click(object sender, RoutedEventArgs e)
+        {
+            Uri uri;
+           if (textbox.Text == "")
+           {
+                uri = new Uri("http://www.neu.edu.cn/indexsource/neusong.mp3");
+            }
+            else
+                uri = new Uri(textbox.Text);
+            string Filename = System.IO.Path.GetFileName(uri.LocalPath);
+
+            StorageFile file = await KnownFolders.MusicLibrary.CreateFileAsync(Filename,CreationCollisionOption.ReplaceExisting);
+
+            HttpClient httpClient = new HttpClient();
+            HttpResponseMessage httpResponse = new Windows.Web.Http.HttpResponseMessage();
+            string httpResponseBody = "";
+            try
+            {
+                //Send the GET request
+                httpResponse = await httpClient.GetAsync(uri);
+                httpResponse.EnsureSuccessStatusCode();
+                httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
+                var sourceStream= await httpResponse.Content.ReadAsInputStreamAsync();
+                    using (var destinationStream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                    {
+                        using (var destinationOutputStream = destinationStream.GetOutputStreamAt(0))
+                        {
+                            await RandomAccessStream.CopyAndCloseAsync(sourceStream, destinationStream);
+                        }
+                    }
+
+                var stream1 = await file.OpenAsync(Windows.Storage.FileAccessMode.Read);
+                mediaplayer.SetSource(stream1, file.ContentType);
+                mediaplayer.Play();
+                filename.Text = Filename;
+
+            }
+            catch (Exception ex)
+            {
+                httpResponseBody = "Error: " + ex.HResult.ToString("X") + " Message: " + ex.Message;
+            }
+
+        }
     }
+
+
+
 }
